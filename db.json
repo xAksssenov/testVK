@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Кирилл",
+      "email": "aks.kirill32@gmail.com",
+      "age": 20,
+      "profession": "Программист",
+      "wages": 100000
+    },
+    {
+      "id": "2",
+      "name": "Мария",
+      "email": "aks.kirill32@gmail.com",
+      "age": 20,
+      "profession": "Программист",
+      "wages": 100000
+    },
+    {
+      "id": "3",
+      "name": "Иван",
+      "email": "32@mail.ru",
+      "age": 20,
+      "profession": "Машинист",
+      "wages": 50000
+    },
+    {
+      "id": "bbe1",
+      "name": "Виктория",
+      "email": "1@mail.ru",
+      "age": 20,
+      "profession": "Учитель",
+      "wages": 70000
+    }
+  ]
+}
