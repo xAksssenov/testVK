@@ -32,7 +32,13 @@ export const RecordForm: React.FC = () => {
 
       if (response.status === 201) {
         console.log("Успешно", formData);
-        setFormData({ name: "", email: "", age: 0, profession: "", wages: 0 });
+        setFormData({
+          name: "",
+          email: "",
+          age: 0,
+          profession: "",
+          wages: 0,
+        });
       }
     } catch (error) {
       console.log(error);
@@ -73,6 +79,7 @@ export const RecordForm: React.FC = () => {
       <TextField
         label="Заработная плата"
         name="wages"
+        type="number"
         value={formData.wages}
         onChange={handleChange}
       />
