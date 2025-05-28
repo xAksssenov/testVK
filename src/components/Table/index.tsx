@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from "react-window";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import type { Record, TableProps } from "../../types";
 import axios from "axios";
+import { tableStyles } from "./styles";
 
 const fieldsConfig = [
   { name: "name", label: "Имя" },
@@ -15,7 +16,7 @@ const fieldsConfig = [
 
 const PAGE_SIZE = 10;
 
-export default function RecordsTable({ refreshTrigger = 0 }: TableProps) {
+export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
   const [items, setItems] = useState<Record[]>([]);
   const [nextOffset, setNextOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -75,51 +76,19 @@ export default function RecordsTable({ refreshTrigger = 0 }: TableProps) {
   }) => {
     if (!isItemLoaded(index)) {
       return (
-        <Box
-          sx={{
-            ...style,
-            display: "flex",
-            alignItems: "center",
-            padding: "0 16px",
-            backgroundColor: "rgba(0, 0, 0, 0.04)",
-          }}
-        >
-          <Typography>Загрузка...</Typography>
+        <Box style={style} sx={tableStyles.loadingRow}>
+          <Box sx={tableStyles.cell}>
+            <Typography>Загрузка...</Typography>
+          </Box>
         </Box>
       );
     }
 
     const item = items[index];
     return (
-      <Box
-        sx={{
-          ...style,
-          display: "flex",
-          padding: "8px 16px",
-          borderBottom: "1px solid rgba(224, 224, 224, 1)",
-          backgroundColor: index % 2 === 0 ? "#fff" : "rgba(0, 0, 0, 0.02)",
-          transition: "background-color 0.2s ease",
-          "&:hover": {
-            backgroundColor: "rgba(0, 0, 0, 0.04)",
-          },
-        }}
-      >
+      <Box style={style} sx={tableStyles.row}>
         {fieldsConfig.map((field) => (
-          <Box
-            key={field.name}
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              px: 1,
-              "&:first-of-type": {
-                pl: 2,
-              },
-              "&:last-child": {
-                pr: 2,
-              },
-            }}
-          >
+          <Box key={field.name} sx={tableStyles.cell}>
             <Typography
               variant="body2"
               color="text.primary"
@@ -147,61 +116,31 @@ export default function RecordsTable({ refreshTrigger = 0 }: TableProps) {
     );
   };
 
-  if (error)
+  if (loading && items.length === 0) {
     return (
-      <Box sx={{ p: 2, color: "error.main" }}>
-        <Typography>Ошибка: {error}</Typography>
+      <Box sx={tableStyles.container}>
+        <Box sx={tableStyles.loadingContainer}>
+          <CircularProgress />
+        </Box>
       </Box>
     );
+  }
+
+  if (error) {
+    return (
+      <Box sx={tableStyles.container}>
+        <Box sx={tableStyles.loadingContainer}>
+          <CircularProgress />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        bgcolor: "background.paper",
-        borderRadius: 1,
-        overflow: "hidden",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-        "& .ReactVirtualized__Grid": {
-          "&::-webkit-scrollbar": {
-            width: "8px",
-            height: "8px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "4px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "#555",
-          },
-        },
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          p: 2,
-          borderBottom: "1px solid rgba(224, 224, 224, 1)",
-          backgroundColor: "#fafafa",
-        }}
-      >
+    <Box sx={tableStyles.container}>
+      <Box sx={tableStyles.headerRow}>
         {fieldsConfig.map((field) => (
-          <Box
-            key={field.name}
-            sx={{
-              flex: 1,
-              px: 1,
-              "&:first-of-type": {
-                pl: 2,
-              },
-              "&:last-child": {
-                pr: 2,
-              },
-            }}
-          >
+          <Box key={field.name} sx={tableStyles.cell}>
             <Typography
               variant="subtitle2"
               color="text.secondary"
@@ -232,4 +171,4 @@ export default function RecordsTable({ refreshTrigger = 0 }: TableProps) {
       </InfiniteLoader>
     </Box>
   );
-}
+};

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Box, Button } from "@mui/material";
 import { RecordForm } from "./components/Form";
-import RecordsTable from "./components/Table";
+import { RecordsTable } from "./components/Table";
 import { Layout } from "./components/Layout";
 import { Modal } from "./components/Modal";
 

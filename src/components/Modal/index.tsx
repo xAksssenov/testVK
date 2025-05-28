@@ -1,36 +1,20 @@
 import { Box, Modal as MuiModal } from "@mui/material";
 import type { ModalProps } from "../../types";
+import { modalStyles } from "./styles";
 
-export const Modal = ({ open, onClose, children }: ModalProps) => {
+export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
   return (
     <MuiModal
       open={open}
       onClose={onClose}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      sx={modalStyles.modal}
     >
       <Box
         onClick={(e) => e.stopPropagation()}
-        sx={{
-          position: "relative",
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-          maxWidth: "600px",
-          width: "100%",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          "&:focus": {
-            outline: "none",
-          },
-        }}
+        sx={modalStyles.content}
       >
         {children}
       </Box>
     </MuiModal>
   );
-}; 
+};

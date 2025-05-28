@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
 import axios from "axios";
 import type { FormErrors, FormProps } from "../../types";
+import { formStyles } from "./styles";
 
 export const RecordForm: React.FC<FormProps> = ({ onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -113,7 +114,7 @@ export const RecordForm: React.FC<FormProps> = ({ onSuccess }) => {
   return (
     <Box
       component="form"
-      sx={{ display: "grid", gap: 2 }}
+      sx={formStyles.form}
       onSubmit={handleSubmit}
     >
       <TextField
@@ -166,7 +167,12 @@ export const RecordForm: React.FC<FormProps> = ({ onSuccess }) => {
         disabled={isSubmitting}
         inputProps={{ min: 0 }}
       />
-      <Button type="submit" variant="contained" disabled={isSubmitting}>
+      <Button 
+        type="submit" 
+        variant="contained" 
+        disabled={isSubmitting}
+        sx={formStyles.submitButton}
+      >
         {isSubmitting ? "Отправка..." : "Отправить"}
       </Button>
     </Box>
