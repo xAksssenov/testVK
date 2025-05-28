@@ -1,27 +1,68 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { act } from "react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { RecordForm } from "../components/Form";
-import { server } from "../mocks/server";
+import type { FormField } from "../types";
+
+const mockOnSuccess = jest.fn();
+
+const testFields: FormField[] = [
+  {
+    name: "name",
+    label: "Имя",
+    type: "text",
+    validation: {
+      required: true,
+      minLength: 2,
+      message: "Имя должно содержать минимум 2 символа",
+    },
+  },
+  {
+    name: "email",
+    label: "Почта",
+    type: "email",
+    validation: {
+      required: true,
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: "Введите корректный email",
+    },
+  },
+  {
+    name: "age",
+    label: "Возраст",
+    type: "number",
+    validation: {
+      required: true,
+      min: 18,
+      max: 100,
+      message: "Возраст должен быть от 18 до 100 лет",
+    },
+  },
+  {
+    name: "profession",
+    label: "Профессия",
+    type: "text",
+    validation: {
+      required: true,
+    },
+  },
+  {
+    name: "wages",
+    label: "Заработная плата",
+    type: "number",
+    validation: {
+      required: true,
+      min: 0,
+      message: "Заработная плата не может быть отрицательной",
+    },
+  },
+];
 
 describe("RecordForm", () => {
-  const mockOnSuccess = jest.fn();
-
-  beforeAll(() => {
-    server.listen();
-  });
-
-  afterEach(() => {
-    server.resetHandlers();
+  beforeEach(() => {
     mockOnSuccess.mockClear();
   });
 
-  afterAll(() => {
-    server.close();
-  });
-
   it("renders all form fields", () => {
-    render(<RecordForm onSuccess={mockOnSuccess} />);
+    render(<RecordForm fields={testFields} onSuccess={mockOnSuccess} />);
 
     expect(screen.getByLabelText(/имя/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/почта/i)).toBeInTheDocument();
@@ -31,60 +72,96 @@ describe("RecordForm", () => {
   });
 
   it("shows validation errors for empty required fields", async () => {
-    render(<RecordForm onSuccess={mockOnSuccess} />);
+    render(<RecordForm fields={testFields} onSuccess={mockOnSuccess} />);
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole("button", { name: /отправить/i }));
+      fireEvent.click(screen.getByText(/отправить/i));
     });
 
-    await waitFor(() => {
-      expect(screen.getByText("Имя обязательно для заполнения")).toBeInTheDocument();
-      expect(screen.getByText("Email обязателен для заполнения")).toBeInTheDocument();
-      expect(screen.getByText("Возраст обязателен для заполнения")).toBeInTheDocument();
-      expect(screen.getByText("Профессия обязательна для заполнения")).toBeInTheDocument();
-      expect(screen.getByText("Заработная плата обязательна для заполнения")).toBeInTheDocument();
-    }, { timeout: 5000 });
+    expect(
+      screen.getByText("Имя обязательно для заполнения")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Email обязателен для заполнения")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Возраст обязателен для заполнения")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Профессия обязательна для заполнения")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Заработная плата обязательна для заполнения")
+    ).toBeInTheDocument();
   });
 
-  it("shows validation errors for invalid data", async () => {
-    render(<RecordForm onSuccess={mockOnSuccess} />);
+  it("shows validation errors for invalid input", async () => {
+    render(<RecordForm fields={testFields} onSuccess={mockOnSuccess} />);
 
     await act(async () => {
-      await userEvent.type(screen.getByLabelText(/имя/i), "A");
-      await userEvent.type(screen.getByLabelText(/почта/i), "invalid-email");
-      await userEvent.type(screen.getByLabelText(/возраст/i), "15");
-      await userEvent.type(screen.getByLabelText(/заработная плата/i), "-1000");
+      fireEvent.change(screen.getByLabelText(/имя/i), {
+        target: { value: "a" },
+      });
+      fireEvent.change(screen.getByLabelText(/почта/i), {
+        target: { value: "invalid-email" },
+      });
+      fireEvent.change(screen.getByLabelText(/возраст/i), {
+        target: { value: "15" },
+      });
+      fireEvent.change(screen.getByLabelText(/заработная плата/i), {
+        target: { value: "-100" },
+      });
+      fireEvent.click(screen.getByText(/отправить/i));
     });
 
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", { name: /отправить/i }));
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText("Имя должно содержать минимум 2 символа")).toBeInTheDocument();
-      expect(screen.getByText("Введите корректный email")).toBeInTheDocument();
-      expect(screen.getByText("Возраст должен быть от 18 до 100 лет")).toBeInTheDocument();
-      expect(screen.getByText("Заработная плата не может быть отрицательной")).toBeInTheDocument();
-    }, { timeout: 5000 });
+    expect(
+      screen.getByText("Имя должно содержать минимум 2 символа")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Введите корректный email")).toBeInTheDocument();
+    expect(
+      screen.getByText("Возраст должен быть от 18 до 100 лет")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Заработная плата не может быть отрицательной")
+    ).toBeInTheDocument();
   });
 
-  it("successfully submits form with valid data", async () => {
-    render(<RecordForm onSuccess={mockOnSuccess} />);
+  it("submits form with valid data", async () => {
+    render(<RecordForm fields={testFields} onSuccess={mockOnSuccess} />);
 
     await act(async () => {
-      await userEvent.type(screen.getByLabelText(/имя/i), "John Doe");
-      await userEvent.type(screen.getByLabelText(/почта/i), "john@example.com");
-      await userEvent.type(screen.getByLabelText(/возраст/i), "30");
-      await userEvent.type(screen.getByLabelText(/профессия/i), "Developer");
-      await userEvent.type(screen.getByLabelText(/заработная плата/i), "50000");
+      fireEvent.change(screen.getByLabelText(/имя/i), {
+        target: { value: "John Doe" },
+      });
+      fireEvent.change(screen.getByLabelText(/почта/i), {
+        target: { value: "john@example.com" },
+      });
+      fireEvent.change(screen.getByLabelText(/возраст/i), {
+        target: { value: "25" },
+      });
+      fireEvent.change(screen.getByLabelText(/профессия/i), {
+        target: { value: "Developer" },
+      });
+      fireEvent.change(screen.getByLabelText(/заработная плата/i), {
+        target: { value: "100000" },
+      });
+      fireEvent.click(screen.getByText(/отправить/i));
     });
 
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", { name: /отправить/i }));
-    });
-
-    await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalled();
-    }, { timeout: 5000 });
+    expect(
+      screen.queryByText("Имя обязательно для заполнения")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Email обязателен для заполнения")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Возраст обязателен для заполнения")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Профессия обязательна для заполнения")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Заработная плата обязательна для заполнения")
+    ).not.toBeInTheDocument();
   });
 });

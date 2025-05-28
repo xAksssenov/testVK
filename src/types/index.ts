@@ -1,12 +1,7 @@
 import type { ReactNode } from "react";
 
 export interface Record {
-  id: number;
-  name: string;
-  email: string;
-  age: number;
-  profession: string;
-  wages: number;
+  [key: string]: string | number;
 }
 
 export interface ModalProps {
@@ -19,15 +14,26 @@ export interface LayoutProps {
   children: ReactNode;
 }
 
+export interface FormField {
+  name: string;
+  label: string;
+  type: "text" | "email" | "number";
+  validation?: {
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: RegExp;
+    minLength?: number;
+    message?: string;
+  };
+}
+
 export interface FormErrors {
-  name?: string;
-  email?: string;
-  age?: string;
-  profession?: string;
-  wages?: string;
+  [key: string]: string | undefined;
 }
 
 export interface FormProps {
+  fields: FormField[];
   onSuccess?: () => void;
 }
 
