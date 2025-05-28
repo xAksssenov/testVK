@@ -34,8 +34,7 @@ export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
           withCredentials: true,
         }
       );
-
-      const data = response.data;
+      const data = response.data as Record[];
       setItems((prev) => [...prev, ...data]);
       setNextOffset((prev) => prev + PAGE_SIZE);
       setHasMore(data.length === PAGE_SIZE);
