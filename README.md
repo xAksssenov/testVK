@@ -1,54 +1,82 @@
-# React + TypeScript + Vite
+# React Form & Table Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Тестовое задание: React-приложение с формой ввода данных и таблицей для их отображения.
 
-Currently, two official plugins are available:
+## Технологии
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 18.2.0
+- TypeScript
+- Material UI
+- Jest & React Testing Library
+- MSW (Mock Service Worker) для мокирования API
 
-## Expanding the ESLint configuration
+## Установка и запуск
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Установка зависимостей
+npm install
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# Запуск в режиме разработки
+npm run dev
+
+# Запуск тестов
+npm test
+
+# Запуск тестов с покрытием
+npm test -- --coverage
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Структура проекта
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
 ```
+src/
+├── components/
+│   ├── Form/         # Компонент формы
+│   └── Table/        # Компонент таблицы
+├── __tests__/        # Тесты
+├── mocks/            # Моки для API
+├── types/            # TypeScript типы
+└── utils/            # Утилиты (валидация и др.)
+```
+
+## Функциональность
+
+### Форма (RecordForm)
+- Валидация полей (имя, email, возраст, профессия, зарплата)
+- Мгновенная валидация при вводе
+- Отправка данных на сервер
+- Очистка формы после успешной отправки
+
+### Таблица (RecordsTable)
+- Загрузка данных с API
+- Отображение состояния загрузки
+- Автоматическое обновление при изменении данных
+
+## Обоснование технических решений
+
+### Управление состоянием
+Используется локальный state (useState) вместо глобального стейт-менеджера, так как:
+- Компоненты независимы друг от друга
+- Нет shared state между компонентами
+- Простая бизнес-логика
+- Следование принципам KISS и YAGNI
+
+### Тестирование
+- Jest и React Testing Library для unit и интеграционных тестов
+- MSW для мокирования API-запросов
+- Покрытие тестами > 90%
+
+## API Endpoints
+
+```
+GET /api/users     # Получение списка пользователей
+POST /api/users    # Создание нового пользователя
+```
+
+## Валидация полей
+
+- Имя: обязательное, минимум 2 символа
+- Email: обязательное, валидный email формат
+- Возраст: обязательное, от 18 до 100 лет
+- Профессия: обязательное поле
+- Зарплата: обязательное, положительное число
