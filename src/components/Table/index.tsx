@@ -137,37 +137,40 @@ export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
 
   return (
     <Box sx={tableStyles.container} role="table">
-      <Box sx={tableStyles.headerRow} role="row">
-        {fieldsConfig.map((field) => (
-          <Box key={field.name} sx={tableStyles.cell} role="columnheader">
-            <Typography
-              variant="subtitle2"
-              color="text.secondary"
-              sx={{ fontWeight: 600 }}
+      <Box sx={tableStyles.tableContent}>
+        <Box sx={tableStyles.headerRow} role="row">
+          {fieldsConfig.map((field) => (
+            <Box key={field.name} sx={tableStyles.cell} role="columnheader">
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                sx={{ fontWeight: 600 }}
+              >
+                {field.label}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+        <InfiniteLoader
+          isItemLoaded={isItemLoaded}
+          itemCount={itemCount}
+          loadMoreItems={loadMore}
+        >
+          {({ onItemsRendered, ref }) => (
+            <List
+              height={500}
+              itemCount={itemCount}
+              itemSize={48}
+              onItemsRendered={onItemsRendered}
+              ref={ref}
+              width="100%"
+              style={{ overflowX: "hidden" }}
             >
-              {field.label}
-            </Typography>
-          </Box>
-        ))}
+              {Row}
+            </List>
+          )}
+        </InfiniteLoader>
       </Box>
-      <InfiniteLoader
-        isItemLoaded={isItemLoaded}
-        itemCount={itemCount}
-        loadMoreItems={loadMore}
-      >
-        {({ onItemsRendered, ref }) => (
-          <List
-            height={500}
-            itemCount={itemCount}
-            itemSize={48}
-            onItemsRendered={onItemsRendered}
-            ref={ref}
-            width="100%"
-          >
-            {Row}
-          </List>
-        )}
-      </InfiniteLoader>
     </Box>
   );
 };

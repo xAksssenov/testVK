@@ -3,33 +3,21 @@ import type { SxProps, Theme } from "@mui/material/styles";
 export const ROW_HEIGHT = 48;
 
 export const tableStyles: Record<string, SxProps<Theme>> = {
-  container: (theme: Theme) => ({
+  container: {
     width: "100%",
     bgcolor: "background.paper",
     borderRadius: 1,
-    overflowX: "hidden",
-    [theme.breakpoints.down("sm")]: {
-      overflowX: "auto",
-    },
+    overflow: "auto",
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
     "& .ReactVirtualized__Grid": {
-      overflowX: "hidden",
-      "&::-webkit-scrollbar": {
-        width: "8px",
-        height: "8px",
-      },
-      "&::-webkit-scrollbar-track": {
-        background: "#f1f1f1",
-      },
-      "&::-webkit-scrollbar-thumb": {
-        background: "#888",
-        borderRadius: "4px",
-      },
-      "&::-webkit-scrollbar-thumb:hover": {
-        background: "#555",
-      },
+      minWidth: "800px",
     },
-  }),
+  },
+
+  tableContent: {
+    minWidth: "800px",
+    position: "relative",
+  },
 
   headerRow: {
     display: "flex",
@@ -39,9 +27,6 @@ export const tableStyles: Record<string, SxProps<Theme>> = {
     p: 2,
     borderBottom: "1px solid rgba(224, 224, 224, 1)",
     backgroundColor: "#fafafa",
-    position: "sticky",
-    top: 0,
-    zIndex: 1,
   },
 
   row: {
@@ -65,6 +50,7 @@ export const tableStyles: Record<string, SxProps<Theme>> = {
     height: `100%`,
     px: 1,
     boxSizing: "border-box",
+    minWidth: "160px",
     "&:first-of-type": {
       pl: 2,
     },
