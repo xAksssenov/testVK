@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useCallback } from "react";
+import { Box, Button } from "@mui/material";
+import { RecordForm } from "./components/Form";
+import RecordsTable from "./components/Table";
+import { Layout } from "./components/Layout";
+import { Modal } from "./components/Modal";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showForm, setShowForm] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleFormSuccess = useCallback(() => {
+    setShowForm(false);
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Layout>
+      <RecordsTable refreshTrigger={refreshTrigger} />
+
+      <Modal open={showForm} onClose={() => setShowForm(false)}>
+        <RecordForm onSuccess={handleFormSuccess} />
+      </Modal>
+
+      <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+        <Button
+          variant="contained"
+          onClick={() => setShowForm(true)}
+          sx={{
+            px: 3,
+            py: 1,
+            borderRadius: 2,
+            textTransform: "none",
+            fontSize: "1rem",
+          }}
+        >
+          Добавить пользователя
+        </Button>
+      </Box>
+    </Layout>
+  );
 }
 
-export default App
+export default App;
