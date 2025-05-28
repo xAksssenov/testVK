@@ -76,8 +76,8 @@ export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
   }) => {
     if (!isItemLoaded(index)) {
       return (
-        <Box style={style} sx={tableStyles.loadingRow}>
-          <Box sx={tableStyles.cell}>
+        <Box style={style} sx={tableStyles.loadingRow} role="row">
+          <Box sx={tableStyles.cell} role="cell">
             <Typography>Загрузка...</Typography>
           </Box>
         </Box>
@@ -86,9 +86,9 @@ export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
 
     const item = items[index];
     return (
-      <Box style={style} sx={tableStyles.row}>
+      <Box style={style} sx={tableStyles.row} role="row">
         {fieldsConfig.map((field) => (
-          <Box key={field.name} sx={tableStyles.cell}>
+          <Box key={field.name} sx={tableStyles.cell} role="cell">
             <Typography
               variant="body2"
               color="text.primary"
@@ -120,7 +120,7 @@ export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
     return (
       <Box sx={tableStyles.container}>
         <Box sx={tableStyles.loadingContainer}>
-          <CircularProgress />
+          <CircularProgress role="progressbar" />
         </Box>
       </Box>
     );
@@ -130,17 +130,17 @@ export const RecordsTable: React.FC<TableProps> = ({ refreshTrigger }) => {
     return (
       <Box sx={tableStyles.container}>
         <Box sx={tableStyles.loadingContainer}>
-          <CircularProgress />
+          <CircularProgress role="progressbar" />
         </Box>
       </Box>
     );
   }
 
   return (
-    <Box sx={tableStyles.container}>
-      <Box sx={tableStyles.headerRow}>
+    <Box sx={tableStyles.container} role="table">
+      <Box sx={tableStyles.headerRow} role="row">
         {fieldsConfig.map((field) => (
-          <Box key={field.name} sx={tableStyles.cell}>
+          <Box key={field.name} sx={tableStyles.cell} role="columnheader">
             <Typography
               variant="subtitle2"
               color="text.secondary"
